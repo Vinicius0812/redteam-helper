@@ -1,0 +1,14 @@
+# Linux/editor noise
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python cache (caso voce adicione scripts auxiliares)
+__pycache__/
+*.pyc
+
+# Local test artifacts
+*.report_*.txt
+*.report_*.json
+*.hunt_*.txt
