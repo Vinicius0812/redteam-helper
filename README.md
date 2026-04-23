@@ -1,10 +1,9 @@
 # Red Team Helper
 
-Script Bash para CTF e triagem de logs em ambiente Kali + VMware Shared Folder.
+Script Bash para CTF e triagem de logs em ambiente Kali.
 
 ## O que ele faz
 
-- Verifica e tenta montar a pasta compartilhada (`vmhgfs-fuse`)
 - Executa manutencao do Kali (`apt update` + `dist-upgrade`)
 - Analisa logs (`apache`, `json`, `syslog`) com extração de:
   - top IP
@@ -23,8 +22,6 @@ Script Bash para CTF e triagem de logs em ambiente Kali + VMware Shared Folder.
 
 - Bash
 - `awk`, `grep`, `sort`, `uniq`, `sed`, `date`, `mktemp`
-- Para montagem da share: `vmhgfs-fuse` (open-vm-tools)
-
 ## Uso
 
 ```bash
@@ -37,7 +34,7 @@ Script Bash para CTF e triagem de logs em ambiente Kali + VMware Shared Folder.
 ## Variavel de ambiente
 
 ```bash
-export REDTEAM_BASE_DIR="/home/vinicius/Desktop/Windows_share/share"
+export REDTEAM_BASE_DIR="/home/vinicius/logs"
 ```
 
 Com isso, arquivos relativos como `logs.txt` serao resolvidos automaticamente nesse caminho.

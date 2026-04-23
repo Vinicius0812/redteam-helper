@@ -1,17 +1,14 @@
 #!/usr/bin/env bash
 
 # redteam_helper.sh
-# Helper para CTF de analise de logs e manipulacao de arquivos no Kali + VMware Shared Folder.
+# Helper para CTF de analise de logs e manipulacao de arquivos no Kali.
 
 set -Eeuo pipefail
 
 SCRIPT_NAME="$(basename "$0")"
-SHARE_NAME_DEFAULT="Windows_Share"
-MOUNT_POINT_DEFAULT="/mnt/hgfs/${SHARE_NAME_DEFAULT}"
-ALT_MOUNT_POINT="/home/vinicius/Desktop/Windows_share/share"
-# Diretório base opcional para resolver caminhos relativos.
-# Exemplo: export REDTEAM_BASE_DIR="/home/vinicius/Desktop/Windows_share/share"
-REDTEAM_BASE_DIR="${REDTEAM_BASE_DIR:-$ALT_MOUNT_POINT}"
+# Diretorio base opcional para resolver caminhos relativos.
+# Exemplo: export REDTEAM_BASE_DIR="/home/vinicius/logs"
+REDTEAM_BASE_DIR="${REDTEAM_BASE_DIR:-}"
 
 trap 'echo "[ERRO] Falha na linha $LINENO. Comando: $BASH_COMMAND" >&2' ERR
 
@@ -24,8 +21,6 @@ Uso rapido:
   $SCRIPT_NAME --help               Mostra esta ajuda
 
 Funcoes:
-  --check-mount [NOME_SHARE]        Verifica se a Shared Folder do VMware esta montada;
-                                    se nao estiver, tenta montar com vmhgfs-fuse.
   --maintain                        Executa manutencao do Kali:
                                     sudo apt update && sudo apt dist-upgrade -y
   --analyze <arquivo_log>           Analisa log (apache/json/syslog) e extrai:
@@ -39,14 +34,13 @@ Funcoes:
 
 Variaveis de ambiente:
   REDTEAM_BASE_DIR   Diretorio base para caminhos relativos de logs/arquivos.
-                     Ex.: /home/vinicius/Desktop/Windows_share/share
+                     Ex.: /home/vinicius/logs
 
 Exemplos:
-  $SCRIPT_NAME --check-mount Windows_Share
-  $SCRIPT_NAME --analyze /home/vinicius/Desktop/Windows_share/share/logs.txt
+  $SCRIPT_NAME --analyze /home/vinicius/logs/logs.txt
   $SCRIPT_NAME --analyze logs.txt
-  $SCRIPT_NAME --hunt /home/vinicius/Desktop/Windows_share/share/logs.txt
-  $SCRIPT_NAME --regex "flag\\{.*\\}" /home/vinicius/Desktop/Windows_share/share
+  $SCRIPT_NAME --hunt /home/vinicius/logs/logs.txt
+  $SCRIPT_NAME --regex "flag\\{.*\\}" /home/vinicius/logs
 EOF
 }
 
@@ -66,27 +60,13 @@ resolve_path() {
     return
   fi
 
-  # 1) Base definida pelo usuario.
+  # Base definida pelo usuario.
   if [[ -n "$REDTEAM_BASE_DIR" ]]; then
     candidate="${REDTEAM_BASE_DIR%/}/$input"
     if [[ -e "$candidate" ]]; then
       echo "$candidate"
       return
     fi
-  fi
-
-  # 2) Tentativa no mount padrao do VMware.
-  candidate="/mnt/hgfs/${SHARE_NAME_DEFAULT}/$input"
-  if [[ -e "$candidate" ]]; then
-    echo "$candidate"
-    return
-  fi
-
-  # 3) Tentativa no atalho desktop.
-  candidate="${ALT_MOUNT_POINT%/}/$input"
-  if [[ -e "$candidate" ]]; then
-    echo "$candidate"
-    return
   fi
 
   # Fallback: retorna o que veio (erro detalhado sera tratado adiante).
@@ -104,35 +84,6 @@ require_cmds() {
   if ((${#missing[@]} > 0)); then
     die "Dependencias ausentes: ${missing[*]}"
   fi
-}
-
-is_mounted() {
-  local mount_point="$1"
-  mountpoint -q "$mount_point"
-}
-
-check_or_mount_shared_folder() {
-  local share_name="${1:-$SHARE_NAME_DEFAULT}"
-  local mount_point="/mnt/hgfs/$share_name"
-
-  if is_mounted "$mount_point"; then
-    info "Shared folder ja montada em: $mount_point"
-    return 0
-  fi
-  if is_mounted "$ALT_MOUNT_POINT"; then
-    info "Shared folder ja montada em: $ALT_MOUNT_POINT"
-    return 0
-  fi
-
-  command -v vmhgfs-fuse >/dev/null 2>&1 || die "vmhgfs-fuse nao encontrado. Instale open-vm-tools/open-vm-tools-desktop."
-
-  warn "Shared folder nao montada. Tentando montar .host:/$share_name em $mount_point ..."
-  sudo mkdir -p /mnt/hgfs
-  sudo mkdir -p "$mount_point"
-  sudo vmhgfs-fuse ".host:/$share_name" "$mount_point" -o allow_other -o uid="$(id -u)" -o gid="$(id -g)" \
-    || die "Falha ao montar. Verifique o nome da pasta no VMware Shared Folders."
-
-  info "Montagem concluida em: $mount_point"
 }
 
 run_maintenance() {
@@ -164,7 +115,6 @@ detect_log_format() {
 normalize_apache() {
   local file="$1"
   awk '
-  function unquote(s) { gsub(/^"|"$/, "", s); return s }
   {
     ip=$1
     method="-"; url="-"; status="-"; ua="-"; minute="-"
@@ -210,7 +160,7 @@ normalize_apache() {
 normalize_json() {
   local file="$1"
   awk '
-  function jstr(line, key,   p,s,r,m) {
+  function jstr(line, key,   p,s) {
     p="\"" key "\"[[:space:]]*:[[:space:]]*\"[^\"]*\""
     if (match(line, p)) {
       s=substr(line, RSTART, RLENGTH)
@@ -377,7 +327,6 @@ analyze_logs() {
     find_suspicious_endpoints "$tsv" || true
   } | tee "$report_txt"
 
-  # Extrai apenas o valor mais frequente por categoria para JSON resumido.
   local ip_top url_top ua_top status_top method_top minute_top
   ip_top="$(awk -F'\t' '$1 != "-" && $1 != "" {print $1}' "$tsv" | sort | uniq -c | sort -nr | head -n1 | sed 's/^[[:space:]]*//' || true)"
   url_top="$(awk -F'\t' '$2 != "-" && $2 != "" {print $2}' "$tsv" | sort | uniq -c | sort -nr | head -n1 | sed 's/^[[:space:]]*//' || true)"
@@ -431,7 +380,6 @@ regex_filter_txt() {
   if [[ -f "$target_path" ]]; then
     [[ "$target_path" == *.txt ]] || die "Arquivo deve ser .txt: $target_path"
     info "Filtrando em arquivo: $target_path"
-    # grep -E: regex estendida; -n: mostra numero da linha.
     grep -En "$regex" "$target_path" || true
     return
   fi
@@ -450,41 +398,36 @@ print_menu() {
 ========================================
          Red Team Helper v2
 ========================================
-1) Verificar/Montar Shared Folder
-2) Manutencao (apt update + dist-upgrade)
-3) Analise de logs (IP, URL, UA, status, metodo, pico/min)
-4) Hunt de IOC/Flags (hash, url, ip, dominio)
-5) Filtro Regex em .txt
-6) Sair
+1) Manutencao (apt update + dist-upgrade)
+2) Analise de logs (IP, URL, UA, status, metodo, pico/min)
+3) Hunt de IOC/Flags (hash, url, ip, dominio)
+4) Filtro Regex em .txt
+5) Sair
 EOF
 }
 
 interactive_menu() {
   while true; do
     print_menu
-    read -r -p "Escolha [1-6]: " opt
+    read -r -p "Escolha [1-5]: " opt
     case "${opt:-}" in
       1)
-        read -r -p "Nome da shared folder [${SHARE_NAME_DEFAULT}]: " share
-        check_or_mount_shared_folder "${share:-$SHARE_NAME_DEFAULT}"
-        ;;
-      2)
         run_maintenance
         ;;
-      3)
+      2)
         read -r -p "Caminho do arquivo de log: " file
         analyze_logs "$file"
         ;;
-      4)
+      3)
         read -r -p "Caminho do arquivo para hunt: " file
         hunt_mode "$file"
         ;;
-      5)
+      4)
         read -r -p "Regex (grep -E): " rgx
         read -r -p "Arquivo .txt ou diretorio: " target
         regex_filter_txt "$rgx" "$target"
         ;;
-      6)
+      5)
         exit 0
         ;;
       *)
@@ -506,9 +449,6 @@ main() {
   case "$1" in
     --help|-h)
       usage
-      ;;
-    --check-mount)
-      check_or_mount_shared_folder "${2:-$SHARE_NAME_DEFAULT}"
       ;;
     --maintain)
       run_maintenance
