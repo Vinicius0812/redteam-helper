@@ -1,0 +1,5 @@
+<134>1 2026-08-12T13:00:01Z labhost web 123 ID47 - src=192.0.2.88 method=GET path=/api/health status=200 ua="lab-agent/2.0"
+<134>1 2026-08-12T13:00:30Z labhost web 123 ID48 - client_ip=192.0.2.88 "POST /login HTTP/1.1" status=401 user_agent="lab-agent/2.0"
+<34>1 2026-08-12T13:01:00Z labhost sshd 77 ID49 - Accepted publickey for lab source_ip=203.0.113.22
+malformed syslog
+

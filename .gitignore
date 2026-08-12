@@ -12,3 +12,11 @@ __pycache__/
 *.report_*.txt
 *.report_*.json
 *.hunt_*.txt
+artifacts/
+.tmp-*/
+.tmp-*.tsv
+.tools/
+.check-tmp.*/
+
+# Test/runtime scratch data
+tests/tmp/

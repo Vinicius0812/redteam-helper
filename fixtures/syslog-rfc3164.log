@@ -1,0 +1,5 @@
+Aug 12 10:00:01 labhost web[123]: src=198.51.100.8 method=GET path=/admin status=403 ua="lab-agent/1.0"
+Aug 12 10:00:30 labhost web[123]: client_ip=198.51.100.8 method=POST uri=/login status=401 user_agent="lab-agent/2.0"
+Aug 12 10:01:00 labhost sshd[77]: Accepted publickey for lab from 203.0.113.9 port 2222
+not a syslog record
+

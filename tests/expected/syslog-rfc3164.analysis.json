@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "tool": {"name": "redteam-helper", "version": "0.2.0"},
+  "report_type": "log_analysis",
+  "input": {"source": "<fixture>", "format": "syslog"},
+  "summary": {
+    "total_lines": 5,
+    "parsed_lines": 3,
+    "invalid_lines": 1,
+    "blank_lines": 1
+  },
+  "rankings": {
+    "top_ips": [
+      {"value": "198.51.100.8", "count": 2},
+      {"value": "203.0.113.9", "count": 1}
+    ],
+    "top_urls": [
+      {"value": "/admin", "count": 1},
+      {"value": "/login", "count": 1}
+    ],
+    "top_user_agents": [
+      {"value": "lab-agent/1.0", "count": 1},
+      {"value": "lab-agent/2.0", "count": 1}
+    ],
+    "top_status_codes": [
+      {"value": "401", "count": 1},
+      {"value": "403", "count": 1}
+    ],
+    "top_http_methods": [
+      {"value": "GET", "count": 1},
+      {"value": "POST", "count": 1}
+    ],
+    "peak_minutes": [
+      {"value": "Aug 12 10:00", "count": 2},
+      {"value": "Aug 12 10:01", "count": 1}
+    ],
+    "suspicious_endpoints": [
+      {"value": "/admin", "count": 1},
+      {"value": "/login", "count": 1}
+    ]
+  },
+  "quality": {
+    "invalid_reasons": [
+      {"value": "invalid_syslog_header", "count": 1}
+    ]
+  }
+}

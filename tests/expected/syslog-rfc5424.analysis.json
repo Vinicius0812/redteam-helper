@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "tool": {"name": "redteam-helper", "version": "0.2.0"},
+  "report_type": "log_analysis",
+  "input": {"source": "<fixture>", "format": "syslog"},
+  "summary": {
+    "total_lines": 5,
+    "parsed_lines": 3,
+    "invalid_lines": 1,
+    "blank_lines": 1
+  },
+  "rankings": {
+    "top_ips": [
+      {"value": "192.0.2.88", "count": 2},
+      {"value": "203.0.113.22", "count": 1}
+    ],
+    "top_urls": [
+      {"value": "/api/health", "count": 1},
+      {"value": "/login", "count": 1}
+    ],
+    "top_user_agents": [
+      {"value": "lab-agent/2.0", "count": 2}
+    ],
+    "top_status_codes": [
+      {"value": "200", "count": 1},
+      {"value": "401", "count": 1}
+    ],
+    "top_http_methods": [
+      {"value": "GET", "count": 1},
+      {"value": "POST", "count": 1}
+    ],
+    "peak_minutes": [
+      {"value": "2026-08-12T13:00", "count": 2},
+      {"value": "2026-08-12T13:01", "count": 1}
+    ],
+    "suspicious_endpoints": [
+      {"value": "/login", "count": 1}
+    ]
+  },
+  "quality": {
+    "invalid_reasons": [
+      {"value": "invalid_syslog_header", "count": 1}
+    ]
+  }
+}

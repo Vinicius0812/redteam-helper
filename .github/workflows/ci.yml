@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Bash, ShellCheck e Bats
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências de validação
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes bats jq shellcheck
+
+      - name: Executar verificações
+        run: bash scripts/check.sh

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "tool": {"name": "redteam-helper", "version": "0.2.0"},
+  "report_type": "log_analysis",
+  "input": {"source": "<fixture>", "format": "jsonl"},
+  "summary": {
+    "total_lines": 6,
+    "parsed_lines": 3,
+    "invalid_lines": 2,
+    "blank_lines": 1
+  },
+  "rankings": {
+    "top_ips": [
+      {"value": "192.0.2.40", "count": 2},
+      {"value": "198.51.100.77", "count": 1}
+    ],
+    "top_urls": [
+      {"value": "/.env", "count": 1},
+      {"value": "/api/health", "count": 1},
+      {"value": "/login", "count": 1}
+    ],
+    "top_user_agents": [
+      {"value": "lab-client/1.0", "count": 2},
+      {"value": "validator/2.0", "count": 1}
+    ],
+    "top_status_codes": [
+      {"value": "200", "count": 1},
+      {"value": "401", "count": 1},
+      {"value": "404", "count": 1}
+    ],
+    "top_http_methods": [
+      {"value": "GET", "count": 2},
+      {"value": "POST", "count": 1}
+    ],
+    "peak_minutes": [
+      {"value": "2026-08-12T10:00", "count": 2},
+      {"value": "2026-08-12T10:01", "count": 1}
+    ],
+    "suspicious_endpoints": [
+      {"value": "/.env", "count": 1},
+      {"value": "/login", "count": 1}
+    ]
+  },
+  "quality": {
+    "invalid_reasons": [
+      {"value": "invalid_json", "count": 1},
+      {"value": "unsupported_schema", "count": 1}
+    ]
+  }
+}

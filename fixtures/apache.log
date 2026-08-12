@@ -1,0 +1,6 @@
+192.0.2.10 - - [12/Aug/2026:10:00:01 -0300] "GET / HTTP/1.1" 200 120 "-" "lab-browser/1.0"
+192.0.2.10 - - [12/Aug/2026:10:00:20 -0300] "POST /login HTTP/1.1" 401 42 "-" "lab-browser/1.0"
+198.51.100.23 - - [12/Aug/2026:10:01:00 -0300] "GET /.env HTTP/1.1" 404 10 "-" "security-validator/1.0"
+203.0.113.7 - - [12/Aug/2026:10:01:20 -0300] "GET /admin HTTP/1.0" 403 0
+not an apache record
+

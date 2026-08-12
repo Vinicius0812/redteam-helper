@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "tool": {"name": "redteam-helper", "version": "0.2.0"},
+  "report_type": "indicator_hunt",
+  "input": {"source": "<fixture>"},
+  "summary": {
+    "unique_indicators": 7,
+    "total_hits": 8
+  },
+  "indicators": {
+    "flags": [
+      {"value": "flag{training_only}", "count": 2},
+      {"value": "ctf{defensive_validation}", "count": 1}
+    ],
+    "hashes": [
+      {
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "count": 1
+      }
+    ],
+    "urls": [
+      {"value": "https://portal.example.test/login", "count": 1}
+    ],
+    "ips": [
+      {"value": "192.0.2.55", "count": 1}
+    ],
+    "domains": [
+      {"value": "lab.example.test", "count": 1},
+      {"value": "portal.example.test", "count": 1}
+    ]
+  }
+}

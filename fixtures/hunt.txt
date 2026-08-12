@@ -1,0 +1,8 @@
+Dados inteiramente fictícios para validação defensiva autorizada.
+flag{training_only}
+ctf{defensive_validation}
+flag{training_only}
+SHA-256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+URL observada: https://portal.example.test/login
+IP reservado: 192.0.2.55
+Domínio de laboratório: lab.example.test
